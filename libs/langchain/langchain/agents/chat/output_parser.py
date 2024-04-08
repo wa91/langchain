@@ -35,10 +35,8 @@ class ChatOutputParser(AgentOutputParser):
             response = json.loads(action.strip())
             includes_action = "action" in response
             if includes_answer and includes_action:
-                raise OutputParserException(
-                    "Parsing LLM output produced a final answer "
-                    f"and a parse-able action: {text}"
-                )
+                output = text.split(FINAL_ANSWER_ACTION)[-1].strip()
+                return AgentFinish({"output": output}, text)
             return AgentAction(
                 response["action"], response.get("action_input", {}), text
             )
